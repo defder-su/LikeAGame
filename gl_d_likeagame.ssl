@@ -23,7 +23,7 @@ procedure start;
 
 #define MAX_LEVEL 50
 
-#define PERK_LIKEAGAME "Like a game"
+#define PERK_LIKEAGAME "Like a Game"
 #define PERK_LIKEAGAME_IMAGE 9
 #define PERK_LIKEAGAME_DESC(level) "You are not serious about life in the wasteland, taking unnecessary risks. You are so used to taking risks that it comes naturally to people (Steal +" + (2 * level) + "%). On the other hand, you don't have patience (Traps -" + (2 * level) + "%). The perk level increases whenever " + obj_name(dude_obj) + " dies."
 
