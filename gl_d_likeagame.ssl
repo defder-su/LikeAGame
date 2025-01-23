@@ -1,0 +1,54 @@
+/*  
+
+Like a Game mod for Fallout 2 by Defder
+----------------------------------------
+
+- adds a perk that increases in level whenever critter dies
+
+Tested on sfall 4.4.5.1
+
+*/
+
+
+procedure start;
+
+#define SCRIPT_REALNAME "gl_d_likeagame"
+
+#define HOOK_ONDEATH (6)
+
+#define SKILL_STEAL (10)
+#define SKILL_TRAPS (11)
+
+#define set_ini_setting(setting, value) sfall_func2("set_ini_setting", setting, value)
+
+#define MAX_LEVEL 50
+
+#define PERK_LIKEAGAME "Like a game"
+#define PERK_LIKEAGAME_IMAGE 9
+#define PERK_LIKEAGAME_DESC(level) "You are not serious about life in the wasteland, taking unnecessary risks. You are so used to taking risks that it comes naturally to people (Steal +" + (2 * level) + "%). On the other hand, you don't have patience (Traps -" + (2 * level) + "%). The perk level increases whenever " + obj_name(dude_obj) + " dies."
+
+variable SN, deaths, level;
+
+procedure ondeath_handler begin
+   variable critter := get_sfall_arg;
+   if (critter == dude_obj) then begin
+      set_ini_setting(SN, deaths + 1);
+   end
+end
+
+procedure start begin
+   if game_loaded then begin
+      variable l := has_fake_perk(PERK_LIKEAGAME);
+      SN := SCRIPT_REALNAME + ".ini" + "|" + "Deaths" + "|" + obj_name(dude_obj);
+      deaths := get_ini_setting(SN);
+      if (deaths < 0) then deaths := 0;
+      level := deaths;
+      if (level > MAX_LEVEL) then level := MAX_LEVEL;
+      if (l != level) then begin
+         critter_mod_skill(dude_obj, SKILL_STEAL, 2 * (level - l));
+   	   critter_mod_skill(dude_obj, SKILL_TRAPS, 2 * (l - level));
+         set_fake_perk(PERK_LIKEAGAME, level, PERK_LIKEAGAME_IMAGE, PERK_LIKEAGAME_DESC(level));
+      end
+      register_hook_proc(HOOK_ONDEATH, ondeath_handler);
+   end
+end
