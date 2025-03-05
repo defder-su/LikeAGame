@@ -27,11 +27,11 @@ procedure start;
 #define PERK_LIKEAGAME_IMAGE 9
 #define PERK_LIKEAGAME_DESC(level) "You are not serious about life in the wasteland, taking unnecessary risks. You are so used to taking risks that it comes naturally to people (Steal +" + (2 * level) + "%). On the other hand, you don't have patience (Traps -" + (2 * level) + "%). The perk level increases whenever " + obj_name(dude_obj) + " dies."
 
-variable SN, deaths, level;
+variable SN, deaths, level, name;
 
 procedure ondeath_handler begin
    variable critter := get_sfall_arg;
-   if (critter == dude_obj) then begin
+   if ((critter == dude_obj) andAlso (obj_name(critter) == name)) then begin
       set_ini_setting(SN, deaths + 1);
    end
 end
@@ -39,7 +39,8 @@ end
 procedure start begin
    if game_loaded then begin
       variable l := has_fake_perk(PERK_LIKEAGAME);
-      SN := SCRIPT_REALNAME + ".ini" + "|" + "Deaths" + "|" + obj_name(dude_obj);
+      name := obj_name(dude_obj);
+      SN := SCRIPT_REALNAME + ".ini" + "|" + "Deaths" + "|" + name;
       deaths := get_ini_setting(SN);
       if (deaths < 0) then deaths := 0;
       level := deaths;
